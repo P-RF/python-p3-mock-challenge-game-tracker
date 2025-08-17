@@ -41,9 +41,12 @@ class Game:
 
 
 class Player:
+    all = []
+
     def __init__(self, username):
         self.username = username
         self._results = []
+        Player.all.append(self)
 
     @property
     def username(self):
@@ -79,6 +82,27 @@ class Player:
             if result.game == game:
                 count += 1
         return count
+
+    def average_score(self, game):
+        scores = [result._score for result in self._results if result._game == game]
+        if scores:
+            return sum(scores) / len(scores)
+        return 0
+
+    @classmethod
+    def highest_scored(cls, game):
+        if not cls.all:
+            return None
+
+        top_player = None
+        top_avg = 0
+
+        for player in cls.all:
+            avg = player.average_score(game)
+            if avg > top_avg:
+                top_avg = avg
+                top_player = player
+        return top_player
 
 class Result:
     all = []
